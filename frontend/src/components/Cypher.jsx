@@ -38,6 +38,7 @@ const postFile = async (fileName) => {
   formData.append('OutputName', outputName);
   formData.append('total_evs', totalEvs);
   formData.append('min_points', minPoints);
+  formData.append('fileName', file.name);
 
   try {
     const response = await axios.post('http://127.0.0.1:5000/encrypt', formData, {
@@ -45,7 +46,7 @@ const postFile = async (fileName) => {
     });
 
     const blob = new Blob([response.data], {type: 'application/octet-stream'})
-    saveAs(blob, outputName+".enc")
+    saveAs(blob, outputName+".zip")
   }
   catch(error){
     console.error("Error Posting:", error)
