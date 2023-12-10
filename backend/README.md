@@ -1,4 +1,5 @@
 # Servicios Backend para S4: S4: Shamir Secret Sharing Scheme
+### Por Josue Rojas 
 
 Para ejecutar el backend siga los siguientes pasos:
 

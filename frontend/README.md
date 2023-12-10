@@ -1,4 +1,5 @@
 # S4: Shamir Secret Sharing Scheme 
+### Por Josue Rojas 
 
 Webapp desarrollada en React.js + Flask para encriptar/desencriptar archivos con el esquema de Shamir presentado. 
 
