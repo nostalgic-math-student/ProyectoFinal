@@ -1,0 +1,7 @@
+Flask
+pandas
+flask-cors
+numpy
+pyaes
+pbkdf2
+pyAesCrypt
