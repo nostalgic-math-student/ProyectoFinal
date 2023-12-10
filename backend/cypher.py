@@ -3,19 +3,19 @@ import numpy as np
 import hashlib
 from scipy.interpolate import lagrange
 import io
+import zipfile
 
-def cypher(pwd, file_stream ,total_evs=3, min_points=2):
+def cypher(pwd, inputName ,file_stream ,total_evs=3, min_points=2):
 
     # generamos polinomio de t = min_points 
     try:
         if total_evs >= min_points:
             hashed_seed = int(hashlib.sha256(pwd.encode()).hexdigest(), 16) % (2**32 - 1)
-            
-            np.random.seed(hashed_seed)
 
-            poly = 10*np.poly1d(np.random.rand(min_points))
-            evals = [(x, poly(x)) for x in 10*np.random.rand(total_evs)]
-            cypher_key = np.round(poly.coeffs[-1],5)
+            np.random.seed(hashed_seed)
+            poly = np.poly1d(np.random.rand(min_points))
+            evals = [(x, poly(x)) for x in np.random.rand(total_evs)]
+            cypher_key = np.round(poly.coeffs[-1],6)
 
             print(poly)
             print(evals)
@@ -29,8 +29,17 @@ def cypher(pwd, file_stream ,total_evs=3, min_points=2):
 
             encrypted_stream.seek(0)
 
+            zip_stream = io.BytesIO()
 
-            return encrypted_stream, evals
+            with zipfile.ZipFile(zip_stream, 'w', zipfile.ZIP_DEFLATED) as zip_file:
+                zip_file.writestr(inputName+".enc", encrypted_stream.getvalue())
+
+                evals_str = '\n'.join([f'{x}, {fx}' for x, fx in evals])
+                zip_file.writestr('evaluations.txt', evals_str)
+
+            zip_stream.seek(0)
+
+            return zip_stream
 
         else:
             raise Exception("polynomial grade is lower than number of points")
@@ -41,36 +50,41 @@ def cypher(pwd, file_stream ,total_evs=3, min_points=2):
 
 def decrypt(encrypted_filestream,evals):
     
-    buffer_size = 1024*64
+    buffer_size = 64*1024
     decrypted_filestream = io.BytesIO()
     encrypted_filestream.seek(0)
-    try_key = lagrange_interpolation(evals)
+    content = evals.read().decode("utf-8")
+    lineas = content.split('\n')
+
+    evals_temp = [vals.split(",") for vals in lineas]
+    evals_real = [(float(val[0]), float(val[1])) for val in evals_temp]
+    
+    try_key = lagrange_interpolation(evals_real)
+
+    print("TRYKEY", try_key)
     
     try:
-        pyAesCrypt.decryptStream(encrypted_filestream, decrypted_filestream ,str(try_key), 64*1024,len(encrypted_filestream.getvalue()) )
+        pyAesCrypt.decryptStream(encrypted_filestream, decrypted_filestream ,str(try_key), buffer_size,len(encrypted_filestream.getvalue()) )
+        print(decrypted_filestream, "decfy")
         decrypted_filestream.seek(0)
 
         return decrypted_filestream
 
     except TypeError:
-        print("TypeError")
+        print("type error")
 
 def lagrange_interpolation(puntos):
     x = [val[0] for val in puntos]
     y = [val[1] for val in puntos]
-    poly = lagrange(x,y)
-    return np.round(poly.coef[-1],5)
 
-def encrypt_file(key, source, outputName):
-    output =  outputName + ".enc"
-    pyAesCrypt.encryptFile(source, output, key)
-
-    return output
-
-def decrypt_file(key,source):
-    dfile = source.split(".")
-    print(dfile)
-    output = dfile[0]+"dec."+dfile[1]
-    pyAesCrypt.decryptFile(source,output,key)
-
-    return 
+    M = len(x)
+    poly = np.poly1d(0.0)
+    for j in range(M):
+        pt = np.poly1d(y[j])
+        for k in range(M):
+            if k == j:
+                continue
+            factor = x[j]-x[k]
+            pt *= np.poly1d([1.0, -x[k]])/factor
+        poly += pt
+    return np.round(poly.coef[-1],6)
