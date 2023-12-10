@@ -46,8 +46,8 @@ const postEncryptedFile = async (fileName) => {
     <div>
       <h1>DeCypher</h1>
       <div className='bg-color-100'>
-        <input type="file" onChange={handleFileInput} />
-        <input type="file" onChange={handleEvalInput} />
+        <input type="file" placeholder='Insert encrypted file' onChange={handleFileInput} />
+        <input type="file" placeholder='Insert keys file' onChange={handleEvalInput} />
         <button className='btn btn-primary' onClick={postEncryptedFile}>
           Send
         </button>
