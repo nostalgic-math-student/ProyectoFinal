@@ -5,3 +5,6 @@ numpy
 pyaes
 pbkdf2
 pyAesCrypt
+Flask-Uploads
+hashlib
+scipy

@@ -1,3 +1,36 @@
+# S4: Shamir Secret Sharing Scheme 
+
+Webapp desarrollada en React.js + Flask para encriptar/desencriptar archivos con el esquema de Shamir presentado. 
+
+Frameworks utilizados:
+
+- React.js + Tailwind.css / DaisyUI (Frontend)
+- Yarn como gestor de paquetes Frontend
+- Flask (Backend)
+ 
+Para iniciar el servicio de frontend:
+
+instalar [Yarn](https://classic.yarnpkg.com/lang/en/docs/install/#windows-stable)
+
+## Instalar dependencias
+
+Para instalar dependencias una vez instalado Yarn, abra una consola en el folder de frontend y escriba el comando:
+
+`yarn`
+
+## Iniciar servicio en Local
+
+Para iniciar servicio en local escriba en el folder de frontend: 
+
+`yarn start run`
+
+Y el servicio iniciará en la dirección 
+`http://localhost:3000/`
+
+Para utilizar las funciones de la página seguir instrucciones del README.md en el folder `backend`
+
+-----------------------------------
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
