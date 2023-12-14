@@ -12,7 +12,9 @@ const DeCypher = () => {
   // Manejadores para actualizar el estado con el archivo y las evaluaciones seleccionadas.
   const handleFileInput = (e) => {
     setFile(e.target.files[0]);
-    setInputName(e.target.files[0].name);
+    const originalFileName = e.target.files[0].name;
+    const modifiedFileName = originalFileName.replace(/\.enc$/, '');
+    setInputName(modifiedFileName);
   };
   
   const handleEvalInput = (e) => {

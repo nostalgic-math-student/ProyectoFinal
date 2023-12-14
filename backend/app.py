@@ -11,13 +11,14 @@ CORS(app, expose_headers=["Content-Disposition"])  # Habilita CORS (Cross-Origin
 def encrypt_endpoint():
     # Recibe el archivo y otros datos necesarios para el proceso de cifrado desde el formulario.
     file = request.files['file'] 
-    pwd = request.files['password']
+    pwd = request.form['password']
     inputName = request.form['fileName']
     outputName = request.form['OutputName']
     total_evs = int(request.form['total_evs'])  # Número total de evaluaciones.
     min_points = int(request.form['min_points'])  # Número mínimo de puntos para el polinomio.
 
     # Llama a la función 'cypher' para cifrar el archivo.
+    print("aqui", pwd)
     encrypted_stream = cypher(pwd, inputName, file, total_evs, min_points)
 
     # Envía el archivo cifrado como respuesta, con la opción de descargarlo.
@@ -34,6 +35,8 @@ def decrypt_endpoint():
     # Prepara el nombre del archivo final removiendo la extensión.
     temp = inputName.split(".")
     final_name = ".".join(temp[:-1])
+
+    print("final name es", final_name)
 
     # Llama a la función 'decrypt' para descifrar el archivo.
     decrypted_stream = decrypt(encrypted_file, evals)

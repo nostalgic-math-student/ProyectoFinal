@@ -24,6 +24,7 @@ def cypher(pwd, inputName ,file_stream ,total_evs=3, min_points=2):
 
             # Usa el último coeficiente del polinomio como clave de cifrado.
             cypher_key = np.round(poly.coeffs[-1],6)
+            print("key", cypher_key)
 
             # Configura el tamaño del buffer y prepara el flujo de bytes para el archivo cifrado.
             buffer_size = 64*1024
@@ -61,12 +62,15 @@ def decrypt(encrypted_filestream,evals):
     evals_temp = [vals.split(",") for vals in lineas]
     evals_real = [(float(val[0]), float(val[1])) for val in evals_temp]
 
+    print("EVALS", evals_real)
     # Utiliza la interpolación de Lagrange para reconstruir el último coeficiente del polinomio.
     try_key = lagrange_interpolation(evals_real)
 
+    print("trykey", try_key)
+
     # Intenta descifrar el flujo del archivo con la clave obtenida.
     try:
-        pyAesCrypt.decryptStream(encrypted_filestream, decrypted_filestream ,str(try_key), buffer_size,len(encrypted_filestream.getvalue()) )
+        pyAesCrypt.decryptStream(encrypted_filestream, decrypted_filestream ,str(try_key), buffer_size)
         decrypted_filestream.seek(0)
 
         # Retorna el flujo del archivo descifrado.
@@ -91,3 +95,5 @@ def lagrange_interpolation(puntos):
             pt *= np.poly1d([1.0, -x[k]])/factor
         poly += pt
     # Retorna el último coeficiente del polinomio resultante.
+    
+    return np.round(poly.coef[-1],6)
